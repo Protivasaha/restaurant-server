@@ -25,6 +25,8 @@ const client = new MongoClient(uri, {
       await client.connect();
       const menuCollection = client.db("restaurant").collection("menu");
       const reviewCollection = client.db("restaurant").collection("review");
+      const cartCollection = client.db("restaurant").collection("carts");
+
 
       // menu collection
      app.get('/menu',  async(req, res)=>{
@@ -37,6 +39,19 @@ const client = new MongoClient(uri, {
       const result = await reviewCollection.find().toArray()
       res.send(result)
      })
+    //  order add to cart api
+    app.post('/carts', async(req, res)=>{
+      const cart =req.body;
+      const result = await cartCollection.insertOne(cart)
+      res.send(result)
+    })
+    // cart api
+    app.get('/carts', async(req, res)=>{
+      const email = req.query.email
+      const query = {email: email}
+      const result = await cartCollection.find(query).toArray()
+      res.send(result)
+    })
 
     } finally {
       // Ensures that the client will close when you finish/error
